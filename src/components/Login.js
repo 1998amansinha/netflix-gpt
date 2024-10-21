@@ -1,20 +1,19 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Header from "./Header";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
 
-  // State variables for email and password
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
   const toggleForm = () => {
     setIsSignInForm(!isSignInForm);
   };
 
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+
   const handleButtonClick = () => {
-    console.log("Email:", email);  // Log the email state
-    console.log("Password:", password);  // Log the password state
+    console.log(emailRef.current.value);
+    console.log(passwordRef.current.value);
   };
 
   return (
@@ -42,15 +41,13 @@ const Login = () => {
             className="w-3/4 p-3 my-3 mx-10 rounded-sm bg-gray-900 text-white outline outline-offset-2 outline-1 outline-white"
             type="text"
             placeholder="Email or Phone number"
-            value={email}  // Controlled input: value bound to state
-            onChange={(e) => setEmail(e.target.value)}  // Update state on change
+            ref={emailRef}
           />
           <input
             className="w-3/4 p-3 my-3 mx-10 rounded-sm bg-gray-900 outline outline-offset-2 outline-1 outline-white text-white"
             type="password"
             placeholder="Password"
-            value={password}  // Controlled input: value bound to state
-            onChange={(e) => setPassword(e.target.value)}  // Update state on change
+            ref={passwordRef}
           />
           <button
             onClick={handleButtonClick}
