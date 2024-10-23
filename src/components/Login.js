@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import Header from "./Header";
 import { validateData } from "../utils/validate";
 import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -10,6 +11,7 @@ import {
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate()
 
   const toggleForm = () => {
     setIsSignInForm(!isSignInForm);
@@ -26,18 +28,20 @@ const Login = () => {
     );
     setErrorMessage(validationMessage);
 
-    if(validationMessage) return
+    if (validationMessage) return;
 
     if (!isSignInForm) {
       //Sign up Logic
       createUserWithEmailAndPassword(
         auth,
+        nameRef.current.value,
         emailRef.current.value,
         passwordRef.current.value
       )
         .then((userCredential) => {
           const user = userCredential.user;
           console.log(user);
+          navigate('/browse')
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -55,6 +59,7 @@ const Login = () => {
           // Signed in
           const user = userCredential.user;
           console.log(user);
+          navigate('/browse')
         })
         .catch((error) => {
           const errorCode = error.code;
