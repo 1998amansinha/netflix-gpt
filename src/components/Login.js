@@ -6,25 +6,29 @@ import { useNavigate } from "react-router-dom";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/store/userSlice";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const toggleForm = () => {
     setIsSignInForm(!isSignInForm);
   };
 
-  const nameRef = useRef(null);
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
+  const name = useRef(null);
+  const email = useRef(null);
+  const password = useRef(null);
 
   const handleButtonClick = () => {
     const validationMessage = validateData(
-      emailRef.current.value,
-      passwordRef.current.value
+      email.current.value,
+      password.current.value
     );
     setErrorMessage(validationMessage);
 
@@ -34,14 +38,27 @@ const Login = () => {
       //Sign up Logic
       createUserWithEmailAndPassword(
         auth,
-        nameRef.current.value,
-        emailRef.current.value,
-        passwordRef.current.value
+        email.current.value,
+        password.current.value
       )
         .then((userCredential) => {
           const user = userCredential.user;
+          updateProfile(user, {
+            displayName: name.current.value,
+          })
+            .then(() => {
+              if (user) {
+                const { uid, displayName, email } = auth.currentUser;
+                dispatch(
+                  addUser({ uid: uid, displayName: displayName, email: email })
+                );
+              }
+              navigate("/browse");
+            })
+            .catch((error) => {
+              setErrorMessage(error.message);
+            });
           console.log(user);
-          navigate('/browse')
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -52,14 +69,14 @@ const Login = () => {
       // Sign in logic
       signInWithEmailAndPassword(
         auth,
-        emailRef.current.value,
-        passwordRef.current.value
+        email.current.value,
+        password.current.value
       )
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
           console.log(user);
-          navigate('/browse')
+          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -87,7 +104,7 @@ const Login = () => {
         </h2>
         {!isSignInForm && (
           <input
-            ref={nameRef}
+            ref={name}
             className="w-3/4 p-3 my-3 mx-10 rounded-sm bg-gray-900 text-white outline outline-offset-2 outline-1 outline-white"
             type="text"
             placeholder="Full Name"
@@ -97,13 +114,13 @@ const Login = () => {
           className="w-3/4 p-3 my-3 mx-10 rounded-sm bg-gray-900 text-white outline outline-offset-2 outline-1 outline-white"
           type="text"
           placeholder="Email or Phone number"
-          ref={emailRef}
+          ref={email}
         />
         <input
           className="w-3/4 p-3 my-3 mx-10 rounded-sm bg-gray-900 outline outline-offset-2 outline-1 outline-white text-white"
           type="password"
           placeholder="Password"
-          ref={passwordRef}
+          ref={password}
         />
         <p className="text-red-600 mx-10 font-bold text-lg">{errorMessage}</p>
         <button
