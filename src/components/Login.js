@@ -10,6 +10,7 @@ import {
 } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/store/userSlice";
+import { BackGround } from "../utils/constant";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
@@ -36,34 +37,34 @@ const Login = () => {
 
     if (!isSignInForm) {
       //Sign up Logic
+
       createUserWithEmailAndPassword(
         auth,
         email.current.value,
         password.current.value
       )
         .then((userCredential) => {
+          // Signed up
           const user = userCredential.user;
           updateProfile(user, {
             displayName: name.current.value,
           })
             .then(() => {
-              if (user) {
-                const { uid, displayName, email } = auth.currentUser;
-                dispatch(
-                  addUser({ uid: uid, displayName: displayName, email: email })
-                );
-              }
-              navigate("/browse");
+              // Profile updated!
+              const { uid, email, displayName } = auth;
+              dispatch(
+                addUser({ uid: uid, displayName: displayName, email: email })
+              );
             })
             .catch((error) => {
-              setErrorMessage(error.message);
+              // An error occurred
+              navigate("/error");
             });
-          console.log(user);
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          setErrorMessage(errorCode + " " + errorMessage);
+          console.log(errorCode + " " + errorMessage);
         });
     } else {
       // Sign in logic
@@ -75,8 +76,9 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
-          navigate("/browse");
+          if (user) {
+            navigate("/browse");
+          }
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -90,13 +92,10 @@ const Login = () => {
     <div>
       <Header />
       <div className="absolute">
-        <img
-          src="https://assets.nflxext.com/ffe/siteui/vlv3/7c0e18aa-2c95-474d-802e-7f30e75dcca4/web/NP-en-20241014-TRIFECTA-perspective_3d3d9a46-d36b-4896-8c37-44f9d3c9e185_large.jpg"
-          alt="BackGround"
-        />
+        <img src={BackGround} alt="BackGround" />
       </div>
       <form
-        className="bg-opacity-80 absolute bg-gray-950 w-1/3 h-2/3 my-20 mx-auto right-0 left-0 rounded-lg"
+        className="bg-opacity-80 absolute bg-gray-950 w-1/3 my-20 mx-auto right-0 left-0 rounded-lg"
         onSubmit={(e) => e.preventDefault()}
       >
         <h2 className="text-3xl font-bold text-white mx-10 mt-12 mb-6">
@@ -129,7 +128,7 @@ const Login = () => {
         >
           {isSignInForm ? "Sign In" : "Sign up"}
         </button>
-        <p className="text-white mx-10 mt-10" onClick={toggleForm}>
+        <p className="text-white mx-10 mt-10 mb-5" onClick={toggleForm}>
           {isSignInForm ? (
             <>
               New to Netflix?{" "}
