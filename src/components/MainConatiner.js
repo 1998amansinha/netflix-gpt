@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 const MainConatiner = () => {
   const movies = useSelector((store) => store.movies?.nowPlayingMovies);
 
-  if (!movies) return <div>Loading...</div>; // Check if the movies data is available before rendering the component
+  if (!movies) return; // Check if the movies data is available before rendering the component
 
   const mainMovies = movies[0];
   console.log(mainMovies);
