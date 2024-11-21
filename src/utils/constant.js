@@ -12,3 +12,8 @@ export const API_OPTIONS = {
       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwNmU4YWNhYTJiZDYyOTllMDIwMzMxZTU2MmEwM2JiYiIsIm5iZiI6MTczMTk5NzgxNi42MTg0MDYzLCJzdWIiOiI2NzNjMmM2YWFjM2FhNzE0ZjQzMjA2YjMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.lPFMfANofFhVAPk9FP8r9mhjHngEMYLektunDmeAceA",
   },
 };
+
+export const IMAGE_URL = "https://image.tmdb.org/t/p/w500/";
+
+export const TOP_RATED_MOVIES =
+  "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1";
